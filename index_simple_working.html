@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Swim Coach Elite</title>
+  <style>
+    :root{--bg:#f6f5f1;--card:#fffdfa;--text:#1f1d17;--muted:#6d6a63;--line:#e6e0d7;--accent:#0f6b73;--accent2:#e8f1ef;--shadow:0 8px 24px rgba(0,0,0,.06);--radius:18px}
+    *{box-sizing:border-box} html,body{margin:0;padding:0;height:100%} body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(circle at top left, #eef4f1, transparent 35%), var(--bg);color:var(--text)}
+    .app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+    .side{padding:24px;border-right:1px solid var(--line);background:linear-gradient(180deg, rgba(255,255,255,.65), rgba(255,255,255,.25));backdrop-filter:blur(10px)}
+    .brand{display:flex;gap:12px;align-items:center;margin-bottom:24px}
+    .logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--accent),#2ea3ad);color:#fff;display:grid;place-items:center;font-weight:800;box-shadow:var(--shadow)}
+    .brand h1{font-size:18px;margin:0;line-height:1.1}
+    .brand p{margin:2px 0 0;color:var(--muted);font-size:13px}
+    .nav{display:grid;gap:10px}
+    .nav a{display:block;padding:12px 14px;border-radius:14px;background:var(--accent2);color:var(--accent);font-weight:700;text-decoration:none}
+    .meta{margin-top:24px;padding:16px;border:1px solid var(--line);border-radius:var(--radius);background:rgba(255,255,255,.7)}
+    .meta .k{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-top:12px}
+    .meta .v{font-size:15px;font-weight:800;margin-top:4px}
+    .main{padding:28px}
+    .top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:22px}
+    .title{font-size:clamp(2rem,1.2rem + 2.2vw,3.4rem);font-weight:900;letter-spacing:-.04em;line-height:.95;margin:0}
+    .subtitle{color:var(--muted);margin-top:8px}
+    .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+    .card{background:linear-gradient(180deg,#fff, #fcfaf6);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;min-height:120px}
+    .label{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+    .value{font-size:clamp(1.7rem,1.2rem + 1vw,2.4rem);font-weight:900;margin-top:8px}
+    .sub{font-size:13px;color:var(--muted);margin-top:6px}
+    .totals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:16px}
+    .section{margin-top:18px;background:rgba(255,255,255,.8);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:18px}
+    .section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+    .section h2{margin:0;font-size:20px}
+    .btn{border:0;background:var(--accent);color:#fff;padding:11px 16px;border-radius:14px;font-weight:800;cursor:pointer}
+    .list{display:grid;gap:12px}
+    .week{display:grid;gap:10px;margin-bottom:8px}
+    .week-title{padding:10px 12px;border-radius:14px;background:#f3f0eb;border:1px solid var(--line);font-weight:800;color:var(--muted)}
+    .row{display:grid;grid-template-columns:110px 1fr 92px;gap:12px;align-items:center;padding:14px;border-radius:16px;background:#fff;border:1px solid var(--line)}
+    .badge{display:inline-flex;align-items:center;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:800;background:#e7f2f0;color:var(--accent)}
+    .badge.tech{background:#e7f0fb;color:#1d6ca8}.badge.ga{background:#e9f6e7;color:#3f7f2e}.badge.test{background:#fbe9e4;color:#a14b2d}
+    .date,.small{font-size:12px;color:var(--muted)}
+    .session-title{font-weight:800}
+    .session-notes{font-size:13px;color:var(--muted);margin-top:4px}
+    .empty{padding:30px;text-align:center;color:var(--muted);background:#fff;border:1px dashed var(--line);border-radius:16px}
+    @media (max-width:1100px){.grid,.totals{grid-template-columns:1fr 1fr}.app{grid-template-columns:88px 1fr}.brand-text,.nav a span:last-child{display:none}}
+    @media (max-width:760px){.app{grid-template-columns:1fr}.side{position:sticky;top:0;z-index:3}.grid,.totals,.row{grid-template-columns:1fr}.main{padding:16px}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="side">
+      <div class="brand">
+        <div class="logo">S</div>
+        <div class="brand-text">
+          <h1>Swim Coach Elite</h1>
+          <p>Premium Training Dashboard</p>
+        </div>
+      </div>
+      <div class="nav"><a href="#dashboard">Dashboard</a></div>
+      <div class="meta">
+        <div class="k">Athlete</div><div class="v">Malte</div>
+        <div class="k">Goal</div><div class="v">Ironman 2027</div>
+        <div class="k">Rhythmus</div><div class="v">Dienstag & Donnerstag</div>
+      </div>
+    </aside>
+    <main class="main" id="dashboard">
+      <div class="top">
+        <div><h1 class="title">Ironman Planning</h1><div class="subtitle">Athlete: Malte · Goal: Ironman 2027</div></div>
+        <button class="btn" id="reloadBtn">Neu laden</button>
+      </div>
+      <section class="grid">
+        <div class="card"><div class="label">Geplante Einheiten</div><div class="value" id="plannedCount">0</div><div class="sub">Im aktuellen Board</div></div>
+        <div class="card"><div class="label">Wöchentliche Slots</div><div class="value">2</div><div class="sub">Dienstag, Donnerstag</div></div>
+        <div class="card"><div class="label">Einträge</div><div class="value" id="fileCount">0</div><div class="sub">Aus Google Sheet geladen</div></div>
+        <div class="card"><div class="label">Gesamtmeter</div><div class="value" id="totalMetersYear">0 m</div><div class="sub">Jahressumme</div></div>
+      </section>
+      <section class="totals">
+        <div class="card"><div class="label">Woche</div><div class="value" id="metersWeek">0 m</div></div>
+        <div class="card"><div class="label">Monat</div><div class="value" id="metersMonth">0 m</div></div>
+        <div class="card"><div class="label">Jahr</div><div class="value" id="metersYear">0 m</div></div>
+      </section>
+      <section class="section">
+        <div class="section-head"><div><h2>Einheiten</h2><div class="subtitle">Technik, GA und Test sind farblich markiert.</div></div></div>
+        <div class="list" id="sessionList"><div class="empty">Lade Daten...</div></div>
+      </section>
+    </main>
+  </div>
+  <script>
+    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSrdb2-l0kfOwOvL2A2zBL7t_A5_P2tdnndYSK4zoc8Z_DAuvKgODHflE0z7UkonAeQDVujijpg4opp/pub?gid=0&single=true&output=csv';
+    const state = { sessions: [] };
+    const STORAGE_KEY = 'swim-coach-seen-v1';
+    const reloadBtn = document.getElementById('reloadBtn');
+    reloadBtn.addEventListener('click', loadSheet);
+
+    function parseCSV(text){
+      const rows=[]; let cur='', row=[], q=false;
+      text = String(text || '').replace(/^﻿/, '');
+      for(let i=0;i<text.length;i++){
+        const c=text[i], n=text[i+1];
+        if(c==='"' && q && n==='"'){ cur+='"'; i++; continue; }
+        if(c==='"'){ q=!q; continue; }
+        if(c===',' && !q){ row.push(cur.trim()); cur=''; continue; }
+        if((c==='
+' || c==='') && !q){ if(c==='' && n==='
+') continue; row.push(cur.trim()); rows.push(row); row=[]; cur=''; continue; }
+        cur+=c;
+      }
+      if(cur.length || row.length){ row.push(cur.trim()); rows.push(row); }
+      return rows.filter(r => r.some(v => String(v).trim() !== ''));
+    }
+
+    function parseSessions(text){
+      const rows = parseCSV(text);
+      if(rows.length && rows[0].join('|').toLowerCase().includes('datum|typ|titel|meter')) rows.shift();
+      return rows.map(r => ({
+        date: r[0] || '', type: r[1] || '', title: r[2] || '', meters: r[3] || '', focus: r[4] || '', content: r[5] || '', coach: r[6] || ''
+      })).filter(x => x.date || x.title);
+    }
+
+    function getSeenIds(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; } }
+    function setSeenIds(ids){ localStorage.setItem(STORAGE_KEY, JSON.stringify(ids)); }
+    function fmtDate(raw){ const d=new Date(raw); return isNaN(d) ? raw : d.toLocaleDateString('de-DE', {day:'2-digit',month:'2-digit',year:'numeric'}); }
+    function weekKey(raw){ const d=new Date(raw); if(isNaN(d)) return 'Unbekannte Woche'; const t=new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); const day=t.getUTCDay()||7; t.setUTCDate(t.getUTCDate()+4-day); const y=new Date(Date.UTC(t.getUTCFullYear(),0,1)); const w=Math.ceil((((t-y)/86400000)+1)/7); return `KW ${w} / ${t.getUTCFullYear()}`; }
+    function weekNumber(raw){ const d=new Date(raw); if(isNaN(d)) return 0; const t=new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); const day=t.getUTCDay()||7; t.setUTCDate(t.getUTCDate()+4-day); const y=new Date(Date.UTC(t.getUTCFullYear(),0,1)); return Math.ceil((((t-y)/86400000)+1)/7); }
+    function metersOf(list){ return list.reduce((sum,s)=>sum + (parseInt(String(s.meters).replace(/[^0-9]/g,''),10) || 0), 0); }
+    function typeBadge(type){ const t=String(type||'').toLowerCase(); if(t.includes('technik')) return 'tech'; if(t.includes('ga')) return 'ga'; if(t.includes('test')) return 'test'; return ''; }
+
+    function calculateTotals(){
+      const sessions = state.sessions;
+      const now = new Date();
+      const currentWeek = weekNumber(now);
+      const currentMonth = now.getMonth();
+      const currentYear = now.getFullYear();
+      const weekMeters = metersOf(sessions.filter(s => weekNumber(s.date) === currentWeek && new Date(s.date).getFullYear() === currentYear));
+      const monthMeters = metersOf(sessions.filter(s => { const d=new Date(s.date); return !isNaN(d) && d.getMonth()===currentMonth && d.getFullYear()===currentYear; }));
+      const yearMeters = metersOf(sessions.filter(s => { const d=new Date(s.date); return !isNaN(d) && d.getFullYear()===currentYear; }));
+      document.getElementById('metersWeek').textContent = weekMeters.toLocaleString('de-DE') + ' m';
+      document.getElementById('metersMonth').textContent = monthMeters.toLocaleString('de-DE') + ' m';
+      document.getElementById('metersYear').textContent = yearMeters.toLocaleString('de-DE') + ' m';
+      document.getElementById('totalMetersYear').textContent = yearMeters.toLocaleString('de-DE') + ' m';
+    }
+
+    function renderSessions(){
+      const list = document.getElementById('sessionList');
+      const seen = new Set(getSeenIds());
+      const sessions = state.sessions;
+      document.getElementById('plannedCount').textContent = sessions.length;
+      document.getElementById('fileCount').textContent = sessions.length;
+      calculateTotals();
+      if(!sessions.length){ list.innerHTML = '<div class="empty">Keine Einträge gefunden.</div>'; return; }
+      const grouped = {};
+      sessions.forEach((s, i) => { const k = weekKey(s.date); (grouped[k] ||= []).push({ ...s, _id: `${s.date}|${s.title}|${i}` }); });
+      const weekOrder = Object.keys(grouped).sort((a,b) => { const aw = parseInt(a.match(/KW\s+(\d+)/)?.[1]||0,10); const bw = parseInt(b.match(/KW\s+(\d+)/)?.[1]||0,10); return bw - aw; });
+      list.innerHTML = weekOrder.map(w => `
+        <div class="week">
+          <div class="week-title">${w} <span class="small">${grouped[w].length} Einheiten</span></div>
+          ${grouped[w].map(s => {
+            const badge = typeBadge(s.type);
+            const isSeen = seen.has(s._id);
+            return `<div class="row ${isSeen ? 'seen' : ''}">
+              <div><div class="date">${fmtDate(s.date)}</div><div class="small">${s.type || ''}</div></div>
+              <div><div class="session-title">${s.title || ''} ${isSeen ? '<span class="small">· gesehen</span>' : ''}</div><div class="session-notes">${[s.focus, s.content, s.coach].filter(Boolean).join(' · ')}</div></div>
+              <div><span class="badge ${badge}">${String(s.meters || '').replace(/[^0-9]/g,'') || '0'} m</span></div>
+            </div>`;
+          }).join('')}
+        </div>
+      `).join('');
+      calculateTotals();
+    }
+
+    async function loadSheet(){
+      const list = document.getElementById('sessionList');
+      list.innerHTML = '<div class="empty">Lade Daten...</div>';
+      try{
+        const res = await fetch(SHEET_CSV_URL + '&_=' + Date.now(), { cache:'no-store' });
+        const text = await res.text();
+        state.sessions = parseSessions(text);
+        renderSessions();
+      } catch (e){
+        list.innerHTML = '<div class="empty">Fehler beim Laden der Daten.</div>';
+      }
+    }
+    window.addEventListener('load', loadSheet);
+  </script>
+</body>
+</html>
