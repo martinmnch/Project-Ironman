@@ -101,7 +101,9 @@
         if(c==='"'){ q=!q; continue; }
         if(c===',' && !q){ row.push(cur.trim()); cur=''; continue; }
         if((c==='
-' || c==='') && !q){ if(c==='' && n==='
+' || c==='
+') && !q){ if(c==='
+' && n==='
 ') continue; row.push(cur.trim()); rows.push(row); row=[]; cur=''; continue; }
         cur+=c;
       }
