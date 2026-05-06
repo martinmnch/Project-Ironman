@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Swim Coach Dashboard</title>
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet" />
+  <style>
+    :root, [data-theme="light"] {
+      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+      --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem;
+      --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem;
+      --space-12: 3rem; --space-16: 4rem;
+      --color-bg: #f7f6f2; --color-surface: #f9f8f5; --color-surface-2: #fbfbf9;
+      --color-surface-offset: #f3f0ec; --color-surface-dynamic: #e6e4df;
+      --color-divider: #dcd9d5; --color-border: #d4d1ca; --color-text: #28251d;
+      --color-text-muted: #6f6d68; --color-text-faint: #a5a39e; --color-text-inverse: #f9f8f4;
+      --color-primary: #01696f; --color-primary-hover: #0c4e54; --color-primary-highlight: #cedcd8;
+      --color-success: #437a22; --color-warning: #964219; --color-blue: #006494;
+      --radius-sm: 0.375rem; --radius-md: 0.5rem; --radius-lg: 0.75rem; --radius-xl: 1rem; --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px oklch(0.2 0.01 80 / 0.06);
+      --shadow-md: 0 4px 12px oklch(0.2 0.01 80 / 0.08);
+      --shadow-lg: 0 12px 32px oklch(0.2 0.01 80 / 0.12);
+      --font-body: 'Satoshi', Inter, sans-serif;
+      --transition-interactive: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    [data-theme="dark"] {
+      --color-bg: #171614; --color-surface: #1c1b19; --color-surface-2: #201f1d;
+      --color-surface-offset: #1d1c1a; --color-surface-dynamic: #2d2c2a; --color-divider: #262523;
+      --color-border: #393836; --color-text: #cdccca; --color-text-muted: #9a9996; --color-text-faint: #6a6967;
+      --color-text-inverse: #2b2a28; --color-primary: #4f98a3; --color-primary-hover: #227f8b;
+      --color-primary-highlight: #313b3b; --color-success: #6daa45; --color-warning: #bb653b; --color-blue: #5591c7;
+      --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.2); --shadow-md: 0 4px 12px oklch(0 0 0 / 0.3); --shadow-lg: 0 12px 32px oklch(0 0 0 / 0.4);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;overflow:hidden}
+    body{min-height:100dvh;line-height:1.55;font-family:var(--font-body);font-size:var(--text-base);color:var(--color-text);background:var(--color-bg)}
+    img,svg{display:block;max-width:100%;height:auto}
+    button,input,textarea,select{font:inherit;color:inherit}
+    button{cursor:pointer;border:none;background:none}
+    a{color:inherit}
+    :focus-visible{outline:2px solid var(--color-primary);outline-offset:3px;border-radius:var(--radius-sm)}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}
+    .dashboard{display:grid;grid-template-columns:280px 1fr;grid-template-rows:72px 1fr;height:100dvh}
+    .sidebar{grid-row:1 / -1;overflow-y:auto;overscroll-behavior:contain;background:linear-gradient(180deg,var(--color-surface),var(--color-surface-offset));border-right:1px solid color-mix(in oklab,var(--color-text) 10%, transparent);padding:var(--space-6)}
+    .header{grid-column:2;position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);padding:0 var(--space-6);border-bottom:1px solid color-mix(in oklab,var(--color-text) 10%, transparent);background:color-mix(in oklab,var(--color-bg) 86%, transparent);backdrop-filter:blur(14px)}
+    .main{grid-column:2;overflow-y:auto;overscroll-behavior:contain;padding:var(--space-6);display:grid;gap:var(--space-6)}
+    .logo-wrap{display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-8)}
+    .logo{width:40px;height:40px;color:var(--color-primary)}
+    .brand h1{font-size:var(--text-lg);line-height:1.1}
+    .brand p,.muted{font-size:var(--text-sm);color:var(--color-text-muted)}
+    .nav-group{display:grid;gap:var(--space-2);margin-bottom:var(--space-6)}
+    .nav-link{display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);border-radius:var(--radius-lg);font-size:var(--text-sm);text-decoration:none;color:var(--color-text-muted);transition:all var(--transition-interactive)}
+    .nav-link.active,.nav-link:hover{background:var(--color-primary-highlight);color:var(--color-text)}
+    .panel,.card{background:var(--color-surface);border:1px solid color-mix(in oklab,var(--color-text) 10%, transparent);border-radius:var(--radius-xl);box-shadow:var(--shadow-sm)}
+    .panel{padding:var(--space-5)}
+    .toolbar{display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);flex-wrap:wrap}
+    .page-title{font-size:var(--text-xl);line-height:1.05;font-weight:900;letter-spacing:-0.03em}
+    .btn-row{display:flex;gap:var(--space-3);flex-wrap:wrap}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);min-height:44px;padding:0 var(--space-4);border-radius:var(--radius-lg);font-size:var(--text-sm);font-weight:700;transition:all var(--transition-interactive)}
+    .btn-primary{background:var(--color-primary);color:var(--color-text-inverse)}
+    .btn-primary:hover{background:var(--color-primary-hover)}
+    .btn-secondary{background:var(--color-surface-offset);border:1px solid color-mix(in oklab,var(--color-text) 10%, transparent)}
+    .btn-ghost{background:transparent;border:1px dashed color-mix(in oklab,var(--color-text) 18%, transparent)}
+    .grid{display:grid;gap:var(--space-6)}
+    .kpis{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .kpi{padding:var(--space-5)}
+    .kpi .label{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.12em;color:var(--color-text-muted)}
+    .kpi .value{font-size:var(--text-xl);font-weight:900;line-height:1.05;margin-top:var(--space-2);font-variant-numeric:tabular-nums lining-nums}
+    .kpi .sub{font-size:var(--text-sm);color:var(--color-text-muted);margin-top:var(--space-2)}
+    .content-grid{grid-template-columns:1.25fr .9fr}
+    .panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-3);margin-bottom:var(--space-5)}
+    .panel-head h2{font-size:var(--text-lg);line-height:1.1}
+    .section-copy{font-size:var(--text-sm);color:var(--color-text-muted);max-width:60ch}
+    .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-4)}
+    .field{display:grid;gap:var(--space-2)}
+    .field.full{grid-column:1 / -1}
+    label{font-size:var(--text-sm);font-weight:700}
+    input,textarea,select{width:100%;border:1px solid color-mix(in oklab,var(--color-text) 12%, transparent);background:var(--color-surface-2);min-height:44px;border-radius:var(--radius-lg);padding:var(--space-3) var(--space-4)}
+    textarea{min-height:108px;resize:vertical}
+    .upload-zone{display:grid;gap:var(--space-3);padding:var(--space-5);border-radius:var(--radius-lg);background:var(--color-surface-offset);border:1px dashed color-mix(in oklab,var(--color-primary) 35%, transparent)}
+    .calendar-head,.session-row,.file-row{display:grid;grid-template-columns:110px 1fr 90px;gap:var(--space-3);align-items:center}
+    .calendar-head{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.12em;color:var(--color-text-muted);padding-bottom:var(--space-3);border-bottom:1px solid var(--color-divider);margin-bottom:var(--space-3)}
+    .session-list,.file-list{display:grid;gap:var(--space-3)}
+    .session-row,.file-row{padding:var(--space-4);background:var(--color-surface-2);border-radius:var(--radius-lg);border:1px solid color-mix(in oklab,var(--color-text) 8%, transparent)}
+    .session-row .date,.badge,.small{font-size:var(--text-xs);font-variant-numeric:tabular-nums lining-nums}
+    .badge{display:inline-flex;align-items:center;justify-content:center;padding:.35rem .6rem;border-radius:var(--radius-full);background:var(--color-primary-highlight);color:var(--color-primary);font-weight:700}
+    .small{color:var(--color-text-muted)}
+    .session-title{font-size:var(--text-sm);font-weight:700}
+    .session-notes{font-size:var(--text-sm);color:var(--color-text-muted);margin-top:var(--space-1)}
+    .stack{display:grid;gap:var(--space-4)}
+    .split{display:flex;justify-content:space-between;gap:var(--space-3);align-items:center}
+    .chip-row{display:flex;gap:var(--space-2);flex-wrap:wrap}
+    .chip{display:inline-flex;align-items:center;padding:.45rem .65rem;border-radius:var(--radius-full);background:var(--color-surface-offset);font-size:var(--text-xs)}
+    .hint{font-size:var(--text-sm);color:var(--color-text-muted)}
+    .empty{padding:var(--space-8);text-align:center;background:var(--color-surface-offset);border-radius:var(--radius-lg);color:var(--color-text-muted)}
+    .theme-toggle{width:44px;height:44px;border-radius:var(--radius-full);display:grid;place-items:center;background:var(--color-surface);border:1px solid color-mix(in oklab,var(--color-text) 10%, transparent)}
+    .top-tools{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap}
+    .divider{height:1px;background:var(--color-divider)}
+    @media (max-width: 1100px){.kpis,.content-grid,.form-grid{grid-template-columns:1fr 1fr}.dashboard{grid-template-columns:88px 1fr}.brand,.sidebar .muted,.sidebar .nav-label{display:none}.nav-link{justify-content:center;padding:var(--space-3)}}
+    @media (max-width: 780px){html,body{overflow:auto}.dashboard{display:block;height:auto}.sidebar{position:sticky;top:0;z-index:20;display:flex;gap:var(--space-3);padding:var(--space-4);overflow:auto}.logo-wrap{margin:0}.nav-group{display:flex;margin:0}.header{position:static;padding:var(--space-4)}.main{padding:var(--space-4)}.kpis,.content-grid,.form-grid,.calendar-head,.session-row,.file-row{grid-template-columns:1fr}.calendar-head{display:none}.session-row,.file-row{gap:var(--space-2)}}
+  </style>
+</head>
+<body>
+  <a class="sr-only" href="#main">Zum Inhalt springen</a>
+  <div class="dashboard">
+    <aside class="sidebar" aria-label="Hauptnavigation">
+      <div class="logo-wrap">
+        <svg class="logo" viewBox="0 0 64 64" fill="none" aria-label="Swim Coach Logo">
+          <rect x="6" y="10" width="52" height="44" rx="14" stroke="currentColor" stroke-width="4"></rect>
+          <path d="M16 38C21 33 27 33 32 38C37 43 43 43 48 38" stroke="currentColor" stroke-width="4" stroke-linecap="round"></path>
+          <path d="M18 28H46" stroke="currentColor" stroke-width="4" stroke-linecap="round"></path>
+        </svg>
+        <div class="brand">
+          <h1>Swim Coach</h1>
+          <p>Gemeinsames Planungsboard</p>
+        </div>
+      </div>
+      <nav class="nav-group">
+        <a class="nav-link active" href="#dashboard"><span>▣</span><span class="nav-label">Dashboard</span></a>
+        <a class="nav-link" href="#planung"><span>◫</span><span class="nav-label">Planung</span></a>
+        <a class="nav-link" href="#dateien"><span>⇪</span><span class="nav-label">Dateien</span></a>
+        <a class="nav-link" href="#notizen"><span>✎</span><span class="nav-label">Notizen</span></a>
+      </nav>
+      <div class="panel stack" style="margin-top:var(--space-6)">
+        <div>
+          <div class="small">Athlet</div>
+          <div style="font-weight:700">Ironman Swim Prep</div>
+        </div>
+        <div>
+          <div class="small">Rhythmus</div>
+          <div>Dienstag & Donnerstag</div>
+        </div>
+        <div>
+          <div class="small">Coach-Modus</div>
+          <div>Nebendran im Wasser</div>
+        </div>
+      </div>
+    </aside>
+
+    <header class="header">
+      <div>
+        <div class="small">Trainingsjahr 2026</div>
+        <div class="page-title">Schwimmplanung</div>
+      </div>
+      <div class="top-tools">
+        <button class="btn btn-secondary" id="exportBtn">Export JSON</button>
+        <button class="theme-toggle" data-theme-toggle aria-label="Farbschema wechseln">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3A7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="main" id="main">
+      <section class="grid kpis">
+        <article class="card kpi">
+          <div class="label">Geplante Einheiten</div>
+          <div class="value" id="plannedCount">0</div>
+          <div class="sub">Im aktuellen Board</div>
+        </article>
+        <article class="card kpi">
+          <div class="label">Wöchentliche Slots</div>
+          <div class="value">2</div>
+          <div class="sub">Dienstag, Donnerstag</div>
+        </article>
+        <article class="card kpi">
+          <div class="label">Dateien</div>
+          <div class="value" id="fileCount">0</div>
+          <div class="sub">Lokal im Browser</div>
+        </article>
+        <article class="card kpi">
+          <div class="label">Nächster Schwerpunkt</div>
+          <div class="value" style="font-size:var(--text-lg)">Phase 1</div>
+          <div class="sub">Atmung, Lage, Rhythmus</div>
+        </article>
+      </section>
+
+      <section class="grid content-grid">
+        <article class="panel" id="planung">
+          <div class="panel-head">
+            <div>
+              <h2>Einheit anlegen</h2>
+              <p class="section-copy">Hier planst du einzelne Schwimmeinheiten, Wochenziele und Coach-Hinweise. Alles bleibt direkt im Browser sichtbar und kann als JSON exportiert werden.</p>
+            </div>
+            <span class="badge">Planer</span>
+          </div>
+          <form id="sessionForm" class="form-grid">
+            <div class="field">
+              <label for="sessionDate">Datum</label>
+              <input id="sessionDate" type="date" required />
+            </div>
+            <div class="field">
+              <label for="sessionType">Einheitstyp</label>
+              <select id="sessionType">
+                <option>Technik</option>
+                <option>Technik + GA</option>
+                <option>GA locker</option>
+                <option>Test / Standort</option>
+              </select>
+            </div>
+            <div class="field full">
+              <label for="sessionTitle">Titel</label>
+              <input id="sessionTitle" type="text" placeholder="z. B. Wasserlage und ruhige Atmung" required />
+            </div>
+            <div class="field">
+              <label for="sessionMeters">Geplante Meter</label>
+              <input id="sessionMeters" type="number" min="0" step="50" placeholder="1600" />
+            </div>
+            <div class="field">
+              <label for="sessionFocus">Schwerpunkt</label>
+              <input id="sessionFocus" type="text" placeholder="Atmung, Rotation, Balance" />
+            </div>
+            <div class="field full">
+              <label for="sessionContent">Inhalt</label>
+              <textarea id="sessionContent" placeholder="Einschwimmen, Drills, Hauptserie, Ausschwimmen"></textarea>
+            </div>
+            <div class="field full">
+              <label for="sessionCoach">Coach-Hinweis</label>
+              <textarea id="sessionCoach" placeholder="Eine Korrektur pro Bahn, direkt im Wasser vormachen"></textarea>
+            </div>
+            <div class="field full btn-row">
+              <button class="btn btn-primary" type="submit">Einheit speichern</button>
+              <button class="btn btn-secondary" type="button" id="seedBtn">Beispielwoche laden</button>
+              <button class="btn btn-ghost" type="button" id="clearSessions">Alle Einheiten löschen</button>
+            </div>
+          </form>
+        </article>
+
+        <article class="panel" id="dateien">
+          <div class="panel-head">
+            <div>
+              <h2>Pläne hochladen</h2>
+              <p class="section-copy">Du kannst Dateien lokal in dieses Board laden, um sie gemeinsam anzuzeigen, etwa PDFs, DOCX, Bilder oder exportierte Plan-Dateien.</p>
+            </div>
+            <span class="badge">Dateien</span>
+          </div>
+          <div class="upload-zone">
+            <div class="hint">Dateien werden im aktuellen Browser-Fenster gehalten. Für echte gemeinsame Nutzung online empfehle ich als nächsten Schritt Google Drive, Notion oder eine kleine Firebase-Version.</div>
+            <input id="fileInput" type="file" multiple />
+            <div class="chip-row">
+              <span class="chip">PDF</span>
+              <span class="chip">DOCX</span>
+              <span class="chip">PNG / JPG</span>
+              <span class="chip">JSON Export</span>
+            </div>
+          </div>
+          <div class="divider" style="margin:var(--space-5) 0"></div>
+          <div class="file-list" id="fileList">
+            <div class="empty">Noch keine Dateien geladen.</div>
+          </div>
+        </article>
+      </section>
+
+      <section class="grid content-grid" id="dashboard">
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Einheitenübersicht</h2>
+              <p class="section-copy">Die Liste zeigt eure nächsten Sessions mit Fokus, Meterumfang und Trainer-Hinweis. So habt ihr beide immer denselben Planstand.</p>
+            </div>
+            <span class="badge">Kalender</span>
+          </div>
+          <div class="calendar-head">
+            <div>Datum</div>
+            <div>Einheit</div>
+            <div>Status</div>
+          </div>
+          <div class="session-list" id="sessionList">
+            <div class="empty">Noch keine Einheiten geplant.</div>
+          </div>
+        </article>
+
+        <article class="panel" id="notizen">
+          <div class="panel-head">
+            <div>
+              <h2>Board-Notizen</h2>
+              <p class="section-copy">Nutze dieses Feld für Testsets, Technik-Cues, Wochenfeedback oder Absprachen zur nächsten Einheit.</p>
+            </div>
+            <span class="badge">Notizen</span>
+          </div>
+          <div class="stack">
+            <div class="field">
+              <label for="sharedNotes">Gemeinsame Notizen</label>
+              <textarea id="sharedNotes" placeholder="z. B. Dienstag: Fokus auf ruhige Ausatmung und lange Linie."></textarea>
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-primary" id="saveNotesBtn" type="button">Notizen übernehmen</button>
+            </div>
+            <div class="panel" style="padding:var(--space-4);background:var(--color-surface-2)">
+              <div class="small">Aktueller Stand</div>
+              <p id="notesPreview" class="hint">Noch keine Notizen gespeichert.</p>
+            </div>
+            <div class="panel" style="padding:var(--space-4);background:var(--color-surface-2)">
+              <div class="small">Empfohlene Struktur</div>
+              <ul style="padding-left:1rem;color:var(--color-text-muted)">
+                <li>Einschwimmen</li>
+                <li>Technikdrills</li>
+                <li>Hauptsatz</li>
+                <li>Ausschwimmen</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const state = { sessions: [], files: [], notes: '' };
+    const form = document.getElementById('sessionForm');
+    const sessionList = document.getElementById('sessionList');
+    const plannedCount = document.getElementById('plannedCount');
+    const fileCount = document.getElementById('fileCount');
+    const fileInput = document.getElementById('fileInput');
+    const fileList = document.getElementById('fileList');
+    const notesField = document.getElementById('sharedNotes');
+    const notesPreview = document.getElementById('notesPreview');
+    const themeToggle = document.querySelector('[data-theme-toggle]');
+
+    function setThemeIcon(mode) {
+      themeToggle.innerHTML = mode === 'dark'
+        ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>'
+        : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3A7 7 0 0 0 21 12.79z"></path></svg>';
+    }
+    let theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', theme);
+    setThemeIcon(theme);
+    themeToggle.addEventListener('click', () => {
+      theme = theme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+      setThemeIcon(theme);
+    });
+
+    function formatDate(dateStr) {
+      const date = new Date(dateStr + 'T12:00:00');
+      return isNaN(date) ? dateStr : date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
+
+    function renderSessions() {
+      plannedCount.textContent = String(state.sessions.length);
+      if (!state.sessions.length) {
+        sessionList.innerHTML = '<div class="empty">Noch keine Einheiten geplant.</div>';
+        return;
+      }
+      const items = [...state.sessions].sort((a,b) => a.date.localeCompare(b.date)).map((s, index) => `
+        <article class="session-row">
+          <div>
+            <div class="date">${formatDate(s.date)}</div>
+            <div class="small">${s.type}</div>
+          </div>
+          <div>
+            <div class="session-title">${escapeHtml(s.title)}</div>
+            <div class="session-notes">${escapeHtml(s.focus || 'Kein Schwerpunkt')} · ${s.meters ? escapeHtml(String(s.meters)) + ' m' : 'ohne Meterziel'}</div>
+            <div class="session-notes">${escapeHtml(s.content || 'Kein Inhalt eingetragen')}</div>
+            <div class="session-notes"><strong>Coach:</strong> ${escapeHtml(s.coach || 'Kein Coach-Hinweis')}</div>
+          </div>
+          <div class="stack">
+            <span class="badge">geplant</span>
+            <button class="btn btn-secondary" type="button" data-remove-session="${index}">Löschen</button>
+          </div>
+        </article>`).join('');
+      sessionList.innerHTML = items;
+      document.querySelectorAll('[data-remove-session]').forEach(btn => btn.addEventListener('click', () => {
+        state.sessions.splice(Number(btn.dataset.removeSession), 1);
+        renderSessions();
+      }));
+    }
+
+    function renderFiles() {
+      fileCount.textContent = String(state.files.length);
+      if (!state.files.length) {
+        fileList.innerHTML = '<div class="empty">Noch keine Dateien geladen.</div>';
+        return;
+      }
+      fileList.innerHTML = state.files.map((f, index) => `
+        <article class="file-row">
+          <div>
+            <div class="small">Datei</div>
+            <div class="session-title">${escapeHtml(f.name)}</div>
+          </div>
+          <div>
+            <div class="session-notes">${escapeHtml(f.type || 'Unbekannter Typ')}</div>
+            <div class="small">${Math.round(f.size / 1024)} KB</div>
+          </div>
+          <div class="stack">
+            <a class="btn btn-secondary" href="${f.url}" download="${escapeHtml(f.name)}">Download</a>
+            <button class="btn btn-secondary" type="button" data-remove-file="${index}">Löschen</button>
+          </div>
+        </article>`).join('');
+      document.querySelectorAll('[data-remove-file]').forEach(btn => btn.addEventListener('click', () => {
+        const file = state.files[Number(btn.dataset.removeFile)];
+        if (file?.url) URL.revokeObjectURL(file.url);
+        state.files.splice(Number(btn.dataset.removeFile), 1);
+        renderFiles();
+      }));
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const payload = {
+        date: document.getElementById('sessionDate').value,
+        type: document.getElementById('sessionType').value,
+        title: document.getElementById('sessionTitle').value.trim(),
+        meters: document.getElementById('sessionMeters').value,
+        focus: document.getElementById('sessionFocus').value.trim(),
+        content: document.getElementById('sessionContent').value.trim(),
+        coach: document.getElementById('sessionCoach').value.trim(),
+      };
+      if (!payload.date || !payload.title) return;
+      state.sessions.push(payload);
+      form.reset();
+      renderSessions();
+    });
+
+    document.getElementById('seedBtn').addEventListener('click', () => {
+      state.sessions = [
+        {
+          date: new Date().toISOString().slice(0,10),
+          type: 'Technik',
+          title: 'Wasserlage und ruhige Atmung',
+          meters: 1400,
+          focus: 'Balance, Ausatmung, Kopf ruhig',
+          content: '200 einschwimmen, 6x25 Gleiten, 6x25 Atmung, 4x50 locker, 100 ausschwimmen',
+          coach: 'Nur eine Korrektur pro Bahn; viel vormachen und gemeinsam anschwimmen'
+        },
+        {
+          date: new Date(Date.now() + 2 * 86400000).toISOString().slice(0,10),
+          type: 'Technik + GA',
+          title: 'Rotation und lange Linie',
+          meters: 1600,
+          focus: 'Rotation, ruhiger Armzug, Streckung',
+          content: '200 einschwimmen, 4x25 Catch-up, 6x50 locker, 2x100 ruhig, 200 ausschwimmen',
+          coach: 'Neben ihm schwimmen, Rhythmus vorgeben, keine Hektik zulassen'
+        }
+      ];
+      renderSessions();
+    });
+
+    document.getElementById('clearSessions').addEventListener('click', () => {
+      state.sessions = [];
+      renderSessions();
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      const files = Array.from(e.target.files || []);
+      files.forEach(file => {
+        state.files.push({ name: file.name, size: file.size, type: file.type, url: URL.createObjectURL(file) });
+      });
+      fileInput.value = '';
+      renderFiles();
+    });
+
+    document.getElementById('saveNotesBtn').addEventListener('click', () => {
+      state.notes = notesField.value.trim();
+      notesPreview.textContent = state.notes || 'Noch keine Notizen gespeichert.';
+    });
+
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify({ exportedAt: new Date().toISOString(), ...state }, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'swim-coach-dashboard-export.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    renderSessions();
+    renderFiles();
+  </script>
+</body>
+</html>
