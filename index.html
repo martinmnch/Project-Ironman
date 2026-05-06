@@ -77,13 +77,6 @@
     .panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--space-3);margin-bottom:var(--space-5)}
     .panel-head h2{font-size:var(--text-lg);line-height:1.1}
     .section-copy{font-size:var(--text-sm);color:var(--color-text-muted);max-width:60ch}
-    .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--space-4)}
-    .field{display:grid;gap:var(--space-2)}
-    .field.full{grid-column:1 / -1}
-    label{font-size:var(--text-sm);font-weight:700}
-    input,textarea,select{width:100%;border:1px solid color-mix(in oklab,var(--color-text) 12%, transparent);background:var(--color-surface-2);min-height:44px;border-radius:var(--radius-lg);padding:var(--space-3) var(--space-4)}
-    textarea{min-height:108px;resize:vertical}
-    .upload-zone{display:grid;gap:var(--space-3);padding:var(--space-5);border-radius:var(--radius-lg);background:var(--color-surface-offset);border:1px dashed color-mix(in oklab,var(--color-primary) 35%, transparent)}
     .calendar-head,.session-row,.file-row{display:grid;grid-template-columns:110px 1fr 90px;gap:var(--space-3);align-items:center}
     .calendar-head{font-size:var(--text-xs);text-transform:uppercase;letter-spacing:.12em;color:var(--color-text-muted);padding-bottom:var(--space-3);border-bottom:1px solid var(--color-divider);margin-bottom:var(--space-3)}
     .session-list,.file-list{display:grid;gap:var(--space-3)}
@@ -102,8 +95,8 @@
     .theme-toggle{width:44px;height:44px;border-radius:var(--radius-full);display:grid;place-items:center;background:var(--color-surface);border:1px solid color-mix(in oklab,var(--color-text) 10%, transparent)}
     .top-tools{display:flex;align-items:center;gap:var(--space-3);flex-wrap:wrap}
     .divider{height:1px;background:var(--color-divider)}
-    @media (max-width: 1100px){.kpis,.content-grid,.form-grid{grid-template-columns:1fr 1fr}.dashboard{grid-template-columns:88px 1fr}.brand,.sidebar .muted,.sidebar .nav-label{display:none}.nav-link{justify-content:center;padding:var(--space-3)}}
-    @media (max-width: 780px){html,body{overflow:auto}.dashboard{display:block;height:auto}.sidebar{position:sticky;top:0;z-index:20;display:flex;gap:var(--space-3);padding:var(--space-4);overflow:auto}.logo-wrap{margin:0}.nav-group{display:flex;margin:0}.header{position:static;padding:var(--space-4)}.main{padding:var(--space-4)}.kpis,.content-grid,.form-grid,.calendar-head,.session-row,.file-row{grid-template-columns:1fr}.calendar-head{display:none}.session-row,.file-row{gap:var(--space-2)}}
+    @media (max-width: 1100px){.kpis,.content-grid{grid-template-columns:1fr 1fr}.dashboard{grid-template-columns:88px 1fr}.brand,.sidebar .muted,.sidebar .nav-label{display:none}.nav-link{justify-content:center;padding:var(--space-3)}}
+    @media (max-width: 780px){html,body{overflow:auto}.dashboard{display:block;height:auto}.sidebar{position:sticky;top:0;z-index:20;display:flex;gap:var(--space-3);padding:var(--space-4);overflow:auto}.logo-wrap{margin:0}.nav-group{display:flex;margin:0}.header{position:static;padding:var(--space-4)}.main{padding:var(--space-4)}.kpis,.content-grid,.calendar-head,.session-row,.file-row{grid-template-columns:1fr}.calendar-head{display:none}.session-row,.file-row{gap:var(--space-2)}}
   </style>
 </head>
 <body>
@@ -130,15 +123,11 @@
       <div class="panel stack" style="margin-top:var(--space-6)">
         <div>
           <div class="small">Athlet</div>
-          <div style="font-weight:700">Ironman Swim Prep</div>
+          <div style="font-weight:700">Malte</div>
         </div>
         <div>
           <div class="small">Rhythmus</div>
           <div>Dienstag & Donnerstag</div>
-        </div>
-        <div>
-          <div class="small">Coach-Modus</div>
-          <div>Nebendran im Wasser</div>
         </div>
       </div>
     </aside>
@@ -149,7 +138,6 @@
         <div class="page-title">Schwimmplanung</div>
       </div>
       <div class="top-tools">
-        <button class="btn btn-secondary" id="exportBtn">Export JSON</button>
         <button class="theme-toggle" data-theme-toggle aria-label="Farbschema wechseln">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3A7 7 0 0 0 21 12.79z"></path></svg>
         </button>
@@ -171,7 +159,7 @@
         <article class="card kpi">
           <div class="label">Dateien</div>
           <div class="value" id="fileCount">0</div>
-          <div class="sub">Lokal im Browser</div>
+          <div class="sub">Aus Google Sheet geladen</div>
         </article>
         <article class="card kpi">
           <div class="label">Nächster Schwerpunkt</div>
@@ -184,86 +172,10 @@
         <article class="panel" id="planung">
           <div class="panel-head">
             <div>
-              <h2>Einheit anlegen</h2>
-              <p class="section-copy">Hier planst du einzelne Schwimmeinheiten, Wochenziele und Coach-Hinweise. Alles bleibt direkt im Browser sichtbar und kann als JSON exportiert werden.</p>
-            </div>
-            <span class="badge">Planer</span>
-          </div>
-          <form id="sessionForm" class="form-grid">
-            <div class="field">
-              <label for="sessionDate">Datum</label>
-              <input id="sessionDate" type="date" required />
-            </div>
-            <div class="field">
-              <label for="sessionType">Einheitstyp</label>
-              <select id="sessionType">
-                <option>Technik</option>
-                <option>Technik + GA</option>
-                <option>GA locker</option>
-                <option>Test / Standort</option>
-              </select>
-            </div>
-            <div class="field full">
-              <label for="sessionTitle">Titel</label>
-              <input id="sessionTitle" type="text" placeholder="z. B. Wasserlage und ruhige Atmung" required />
-            </div>
-            <div class="field">
-              <label for="sessionMeters">Geplante Meter</label>
-              <input id="sessionMeters" type="number" min="0" step="50" placeholder="1600" />
-            </div>
-            <div class="field">
-              <label for="sessionFocus">Schwerpunkt</label>
-              <input id="sessionFocus" type="text" placeholder="Atmung, Rotation, Balance" />
-            </div>
-            <div class="field full">
-              <label for="sessionContent">Inhalt</label>
-              <textarea id="sessionContent" placeholder="Einschwimmen, Drills, Hauptserie, Ausschwimmen"></textarea>
-            </div>
-            <div class="field full">
-              <label for="sessionCoach">Coach-Hinweis</label>
-              <textarea id="sessionCoach" placeholder="Eine Korrektur pro Bahn, direkt im Wasser vormachen"></textarea>
-            </div>
-            <div class="field full btn-row">
-              <button class="btn btn-primary" type="submit">Einheit speichern</button>
-              <button class="btn btn-secondary" type="button" id="seedBtn">Beispielwoche laden</button>
-              <button class="btn btn-ghost" type="button" id="clearSessions">Alle Einheiten löschen</button>
-            </div>
-          </form>
-        </article>
-
-        <article class="panel" id="dateien">
-          <div class="panel-head">
-            <div>
-              <h2>Pläne hochladen</h2>
-              <p class="section-copy">Du kannst Dateien lokal in dieses Board laden, um sie gemeinsam anzuzeigen, etwa PDFs, DOCX, Bilder oder exportierte Plan-Dateien.</p>
-            </div>
-            <span class="badge">Dateien</span>
-          </div>
-          <div class="upload-zone">
-            <div class="hint">Dateien werden im aktuellen Browser-Fenster gehalten. Für echte gemeinsame Nutzung online empfehle ich als nächsten Schritt Google Drive, Notion oder eine kleine Firebase-Version.</div>
-            <input id="fileInput" type="file" multiple />
-            <div class="chip-row">
-              <span class="chip">PDF</span>
-              <span class="chip">DOCX</span>
-              <span class="chip">PNG / JPG</span>
-              <span class="chip">JSON Export</span>
-            </div>
-          </div>
-          <div class="divider" style="margin:var(--space-5) 0"></div>
-          <div class="file-list" id="fileList">
-            <div class="empty">Noch keine Dateien geladen.</div>
-          </div>
-        </article>
-      </section>
-
-      <section class="grid content-grid" id="dashboard">
-        <article class="panel">
-          <div class="panel-head">
-            <div>
               <h2>Einheitenübersicht</h2>
-              <p class="section-copy">Die Liste zeigt eure nächsten Sessions mit Fokus, Meterumfang und Trainer-Hinweis. So habt ihr beide immer denselben Planstand.</p>
+              <p class="section-copy">Hier siehst du alle Einträge, die aus deinem Google Sheet geladen werden. Änderungen im Sheet erscheinen nach Neuladen der GitHub Page.</p>
             </div>
-            <span class="badge">Kalender</span>
+            <span class="badge">Live</span>
           </div>
           <div class="calendar-head">
             <div>Datum</div>
@@ -271,38 +183,26 @@
             <div>Status</div>
           </div>
           <div class="session-list" id="sessionList">
-            <div class="empty">Noch keine Einheiten geplant.</div>
+            <div class="empty">Lade Daten...</div>
           </div>
         </article>
 
-        <article class="panel" id="notizen">
+        <article class="panel" id="dateien">
           <div class="panel-head">
             <div>
-              <h2>Board-Notizen</h2>
-              <p class="section-copy">Nutze dieses Feld für Testsets, Technik-Cues, Wochenfeedback oder Absprachen zur nächsten Einheit.</p>
+              <h2>Hinweis</h2>
+              <p class="section-copy">Die Daten werden aus deinem veröffentlichten Google Sheet geladen. Wenn du neue Einträge im Sheet machst, Seite neu laden.</p>
             </div>
-            <span class="badge">Notizen</span>
+            <span class="badge">Info</span>
           </div>
           <div class="stack">
-            <div class="field">
-              <label for="sharedNotes">Gemeinsame Notizen</label>
-              <textarea id="sharedNotes" placeholder="z. B. Dienstag: Fokus auf ruhige Ausatmung und lange Linie."></textarea>
-            </div>
-            <div class="btn-row">
-              <button class="btn btn-primary" id="saveNotesBtn" type="button">Notizen übernehmen</button>
+            <div class="panel" style="padding:var(--space-4);background:var(--color-surface-2)">
+              <div class="small">Verbindung</div>
+              <p class="hint">Google Sheets JSON Endpoint aktiv</p>
             </div>
             <div class="panel" style="padding:var(--space-4);background:var(--color-surface-2)">
-              <div class="small">Aktueller Stand</div>
-              <p id="notesPreview" class="hint">Noch keine Notizen gespeichert.</p>
-            </div>
-            <div class="panel" style="padding:var(--space-4);background:var(--color-surface-2)">
-              <div class="small">Empfohlene Struktur</div>
-              <ul style="padding-left:1rem;color:var(--color-text-muted)">
-                <li>Einschwimmen</li>
-                <li>Technikdrills</li>
-                <li>Hauptsatz</li>
-                <li>Ausschwimmen</li>
-              </ul>
+              <div class="small">Ablauf</div>
+              <p class="hint">Eintrag in Sheets speichern → GitHub Page neu laden → Dashboard aktualisiert.</p>
             </div>
           </div>
         </article>
@@ -311,93 +211,72 @@
   </div>
 
   <script>
-    const state = { sessions: [], files: [], notes: '' };
-    const form = document.getElementById('sessionForm');
-    const sessionList = document.getElementById('sessionList');
-    const plannedCount = document.getElementById('plannedCount');
-    const fileCount = document.getElementById('fileCount');
-    const fileInput = document.getElementById('fileInput');
-    const fileList = document.getElementById('fileList');
-    const notesField = document.getElementById('sharedNotes');
-    const notesPreview = document.getElementById('notesPreview');
-    const themeToggle = document.querySelector('[data-theme-toggle]');
+    const SHEET_URL = "https://docs.google.com/spreadsheets/d/2PACX-1vSrdb2-l0kfOwOvL2A2zBL7t_A5_P2tdnndYSK4zoc8Z_DAuvKgODHflE0z7UkonAeQDVujijpg4opp/gviz/tq?tqx=out:json";
+    const state = { sessions: [] };
 
-    function setThemeIcon(mode) {
-      themeToggle.innerHTML = mode === 'dark'
-        ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>'
-        : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3A7 7 0 0 0 21 12.79z"></path></svg>';
-    }
+    const themeToggle = document.querySelector('[data-theme-toggle]');
     let theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     document.documentElement.setAttribute('data-theme', theme);
-    setThemeIcon(theme);
     themeToggle.addEventListener('click', () => {
       theme = theme === 'dark' ? 'light' : 'dark';
       document.documentElement.setAttribute('data-theme', theme);
-      setThemeIcon(theme);
     });
 
-    function formatDate(dateStr) {
-      const date = new Date(dateStr + 'T12:00:00');
-      return isNaN(date) ? dateStr : date.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    function parseGviz(text) {
+      const jsonText = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
+      return JSON.parse(jsonText);
+    }
+
+    function cellValue(cell) {
+      if (!cell) return '';
+      if (cell.v === null || cell.v === undefined) return '';
+      return String(cell.v);
+    }
+
+    function toRows(gviz) {
+      const rows = gviz.table.rows || [];
+      return rows.map(r => {
+        const c = r.c || [];
+        return {
+          date: cellValue(c[0]),
+          type: cellValue(c[1]),
+          title: cellValue(c[2]),
+          meters: cellValue(c[3]),
+          focus: cellValue(c[4]),
+          content: cellValue(c[5]),
+          coach: cellValue(c[6])
+        };
+      }).filter(x => x.date || x.title);
+    }
+
+    function formatDate(raw) {
+      const d = new Date(raw);
+      if (!isNaN(d)) return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      return raw;
     }
 
     function renderSessions() {
-      plannedCount.textContent = String(state.sessions.length);
+      const list = document.getElementById('sessionList');
+      document.getElementById('plannedCount').textContent = state.sessions.length;
       if (!state.sessions.length) {
-        sessionList.innerHTML = '<div class="empty">Noch keine Einheiten geplant.</div>';
+        list.innerHTML = '<div class="empty">Noch keine Einträge gefunden.</div>';
         return;
       }
-      const items = [...state.sessions].sort((a,b) => a.date.localeCompare(b.date)).map((s, index) => `
+      list.innerHTML = state.sessions.map(s => `
         <article class="session-row">
           <div>
-            <div class="date">${formatDate(s.date)}</div>
-            <div class="small">${s.type}</div>
+            <div class="date">${escapeHtml(formatDate(s.date))}</div>
+            <div class="small">${escapeHtml(s.type || 'Einheit')}</div>
           </div>
           <div>
-            <div class="session-title">${escapeHtml(s.title)}</div>
-            <div class="session-notes">${escapeHtml(s.focus || 'Kein Schwerpunkt')} · ${s.meters ? escapeHtml(String(s.meters)) + ' m' : 'ohne Meterziel'}</div>
-            <div class="session-notes">${escapeHtml(s.content || 'Kein Inhalt eingetragen')}</div>
-            <div class="session-notes"><strong>Coach:</strong> ${escapeHtml(s.coach || 'Kein Coach-Hinweis')}</div>
+            <div class="session-title">${escapeHtml(s.title || '')}</div>
+            <div class="session-notes">${escapeHtml(s.focus || '')}${s.meters ? ' · ' + escapeHtml(s.meters) + ' m' : ''}</div>
+            <div class="session-notes">${escapeHtml(s.content || '')}</div>
+            <div class="session-notes"><strong>Coach:</strong> ${escapeHtml(s.coach || '')}</div>
           </div>
-          <div class="stack">
-            <span class="badge">geplant</span>
-            <button class="btn btn-secondary" type="button" data-remove-session="${index}">Löschen</button>
-          </div>
-        </article>`).join('');
-      sessionList.innerHTML = items;
-      document.querySelectorAll('[data-remove-session]').forEach(btn => btn.addEventListener('click', () => {
-        state.sessions.splice(Number(btn.dataset.removeSession), 1);
-        renderSessions();
-      }));
-    }
-
-    function renderFiles() {
-      fileCount.textContent = String(state.files.length);
-      if (!state.files.length) {
-        fileList.innerHTML = '<div class="empty">Noch keine Dateien geladen.</div>';
-        return;
-      }
-      fileList.innerHTML = state.files.map((f, index) => `
-        <article class="file-row">
-          <div>
-            <div class="small">Datei</div>
-            <div class="session-title">${escapeHtml(f.name)}</div>
-          </div>
-          <div>
-            <div class="session-notes">${escapeHtml(f.type || 'Unbekannter Typ')}</div>
-            <div class="small">${Math.round(f.size / 1024)} KB</div>
-          </div>
-          <div class="stack">
-            <a class="btn btn-secondary" href="${f.url}" download="${escapeHtml(f.name)}">Download</a>
-            <button class="btn btn-secondary" type="button" data-remove-file="${index}">Löschen</button>
-          </div>
-        </article>`).join('');
-      document.querySelectorAll('[data-remove-file]').forEach(btn => btn.addEventListener('click', () => {
-        const file = state.files[Number(btn.dataset.removeFile)];
-        if (file?.url) URL.revokeObjectURL(file.url);
-        state.files.splice(Number(btn.dataset.removeFile), 1);
-        renderFiles();
-      }));
+          <div><span class="badge">Plan</span></div>
+        </article>
+      `).join('');
     }
 
     function escapeHtml(str) {
@@ -409,78 +288,21 @@
         .replaceAll("'", '&#039;');
     }
 
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const payload = {
-        date: document.getElementById('sessionDate').value,
-        type: document.getElementById('sessionType').value,
-        title: document.getElementById('sessionTitle').value.trim(),
-        meters: document.getElementById('sessionMeters').value,
-        focus: document.getElementById('sessionFocus').value.trim(),
-        content: document.getElementById('sessionContent').value.trim(),
-        coach: document.getElementById('sessionCoach').value.trim(),
-      };
-      if (!payload.date || !payload.title) return;
-      state.sessions.push(payload);
-      form.reset();
+    async function loadSheet() {
+      const res = await fetch(SHEET_URL + '&_=' + Date.now());
+      const text = await res.text();
+      const gviz = parseGviz(text);
+      state.sessions = toRows(gviz);
+      document.getElementById('fileCount').textContent = state.sessions.length;
       renderSessions();
-    });
+    }
 
-    document.getElementById('seedBtn').addEventListener('click', () => {
-      state.sessions = [
-        {
-          date: new Date().toISOString().slice(0,10),
-          type: 'Technik',
-          title: 'Wasserlage und ruhige Atmung',
-          meters: 1400,
-          focus: 'Balance, Ausatmung, Kopf ruhig',
-          content: '200 einschwimmen, 6x25 Gleiten, 6x25 Atmung, 4x50 locker, 100 ausschwimmen',
-          coach: 'Nur eine Korrektur pro Bahn; viel vormachen und gemeinsam anschwimmen'
-        },
-        {
-          date: new Date(Date.now() + 2 * 86400000).toISOString().slice(0,10),
-          type: 'Technik + GA',
-          title: 'Rotation und lange Linie',
-          meters: 1600,
-          focus: 'Rotation, ruhiger Armzug, Streckung',
-          content: '200 einschwimmen, 4x25 Catch-up, 6x50 locker, 2x100 ruhig, 200 ausschwimmen',
-          coach: 'Neben ihm schwimmen, Rhythmus vorgeben, keine Hektik zulassen'
-        }
-      ];
-      renderSessions();
-    });
-
-    document.getElementById('clearSessions').addEventListener('click', () => {
-      state.sessions = [];
-      renderSessions();
-    });
-
-    fileInput.addEventListener('change', (e) => {
-      const files = Array.from(e.target.files || []);
-      files.forEach(file => {
-        state.files.push({ name: file.name, size: file.size, type: file.type, url: URL.createObjectURL(file) });
+    window.addEventListener('load', () => {
+      loadSheet().catch(err => {
+        document.getElementById('sessionList').innerHTML = '<div class="empty">Fehler beim Laden der Daten.</div>';
+        console.error(err);
       });
-      fileInput.value = '';
-      renderFiles();
     });
-
-    document.getElementById('saveNotesBtn').addEventListener('click', () => {
-      state.notes = notesField.value.trim();
-      notesPreview.textContent = state.notes || 'Noch keine Notizen gespeichert.';
-    });
-
-    document.getElementById('exportBtn').addEventListener('click', () => {
-      const blob = new Blob([JSON.stringify({ exportedAt: new Date().toISOString(), ...state }, null, 2)], { type: 'application/json' });
-      const URL = "https://docs.google.com/spreadsheets/d/2PACX-1vSrdb2-l0kfOwOvL2A2zBL7t_A5_P2tdnndYSK4zoc8Z_DAuvKgODHflE0z7UkonAeQDVujijpg4opp/gviz/tq?tqx=out:json";
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'swim-coach-dashboard-export.json';
-      a.click();
-      URL.revokeObjectURL(url);
-    });
-
-    renderSessions();
-    renderFiles();
   </script>
 </body>
 </html>
