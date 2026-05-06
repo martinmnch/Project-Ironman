@@ -471,7 +471,7 @@
 
     document.getElementById('exportBtn').addEventListener('click', () => {
       const blob = new Blob([JSON.stringify({ exportedAt: new Date().toISOString(), ...state }, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
+      const URL = "https://docs.google.com/spreadsheets/d/2PACX-1vSrdb2-l0kfOwOvL2A2zBL7t_A5_P2tdnndYSK4zoc8Z_DAuvKgODHflE0z7UkonAeQDVujijpg4opp/gviz/tq?tqx=out:json";
       const a = document.createElement('a');
       a.href = url;
       a.download = 'swim-coach-dashboard-export.json';
