@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Swim Coach Dashboard</title>
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet" />
+  <style>
+    :root,[data-theme="light"]{--bg:#f7f6f2;--surface:#f9f8f5;--surface-2:#fbfbf9;--surface-offset:#f3f0ec;--divider:#dcd9d5;--text:#28251d;--muted:#6f6d68;--inverse:#f9f8f4;--primary:#01696f;--primary-hover:#0c4e54;--primary-highlight:#cedcd8;--radius-lg:.75rem;--radius-xl:1rem;--radius-full:9999px;--shadow-sm:0 1px 2px oklch(0.2 0.01 80 / 0.06);--font-body:'Satoshi',Inter,sans-serif;--t:180ms cubic-bezier(.16,1,.3,1)}
+    [data-theme="dark"]{--bg:#171614;--surface:#1c1b19;--surface-2:#201f1d;--surface-offset:#1d1c1a;--divider:#262523;--text:#cdccca;--muted:#9a9996;--inverse:#2b2a28;--primary:#4f98a3;--primary-hover:#227f8b;--primary-highlight:#313b3b;--shadow-sm:0 1px 2px oklch(0 0 0 / 0.2)}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;overflow:hidden}
+    body{min-height:100dvh;line-height:1.55;font-family:var(--font-body);font-size:16px;color:var(--text);background:var(--bg)}
+    button{cursor:pointer;border:none;background:none}
+    a{color:inherit;text-decoration:none}
+    :focus-visible{outline:2px solid var(--primary);outline-offset:3px;border-radius:.375rem}
+    .dashboard{display:grid;grid-template-columns:280px 1fr;grid-template-rows:72px 1fr;height:100dvh}
+    .sidebar{grid-row:1 / -1;overflow-y:auto;background:linear-gradient(180deg,var(--surface),var(--surface-offset));border-right:1px solid color-mix(in oklab,var(--text) 10%, transparent);padding:24px}
+    .header{grid-column:2;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 24px;border-bottom:1px solid color-mix(in oklab,var(--text) 10%, transparent);background:color-mix(in oklab,var(--bg) 86%, transparent);backdrop-filter:blur(14px)}
+    .main{grid-column:2;overflow-y:auto;padding:24px;display:grid;gap:24px}
+    .logo-wrap{display:flex;align-items:center;gap:12px;margin-bottom:32px}
+    .logo{width:40px;height:40px;color:var(--primary)}
+    .brand h1{font-size:18px;line-height:1.1}
+    .brand p,.muted{font-size:14px;color:var(--muted)}
+    .nav-group{display:grid;gap:8px;margin-bottom:24px}
+    .nav-link{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;font-size:14px;color:var(--muted);transition:all var(--t)}
+    .nav-link.active,.nav-link:hover{background:var(--primary-highlight);color:var(--text)}
+    .panel,.card{background:var(--surface);border:1px solid color-mix(in oklab,var(--text) 10%, transparent);border-radius:16px;box-shadow:var(--shadow-sm)}
+    .panel{padding:20px}
+    .page-title{font-size:clamp(1.5rem,1.2rem + 1.25vw,2.25rem);line-height:1.05;font-weight:900;letter-spacing:-.03em}
+    .kpis{display:grid;gap:24px;grid-template-columns:repeat(4,minmax(0,1fr))}
+    .kpi{padding:20px}
+    .kpi .label{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+    .kpi .value{font-size:clamp(1.5rem,1.2rem + 1.25vw,2.25rem);font-weight:900;line-height:1.05;margin-top:8px;font-variant-numeric:tabular-nums lining-nums}
+    .kpi .sub{font-size:14px;color:var(--muted);margin-top:8px}
+    .content-grid{display:grid;gap:24px;grid-template-columns:1.25fr .9fr}
+    .panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px}
+    .panel-head h2{font-size:18px;line-height:1.1}
+    .section-copy{font-size:14px;color:var(--muted);max-width:60ch}
+    .calendar-head,.session-row{display:grid;grid-template-columns:110px 1fr 90px;gap:12px;align-items:center}
+    .calendar-head{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);padding-bottom:12px;border-bottom:1px solid var(--divider);margin-bottom:12px}
+    .session-list{display:grid;gap:12px}
+    .session-row{padding:16px;background:var(--surface-2);border-radius:12px;border:1px solid color-mix(in oklab,var(--text) 8%, transparent)}
+    .date,.badge,.small{font-size:12px;font-variant-numeric:tabular-nums lining-nums}
+    .badge{display:inline-flex;align-items:center;justify-content:center;padding:.35rem .6rem;border-radius:9999px;background:var(--primary-highlight);color:var(--primary);font-weight:700}
+    .small{color:var(--muted)}
+    .session-title{font-size:14px;font-weight:700}
+    .session-notes{font-size:14px;color:var(--muted);margin-top:4px}
+    .stack{display:grid;gap:16px}
+    .theme-toggle{width:44px;height:44px;border-radius:9999px;display:grid;place-items:center;background:var(--surface);border:1px solid color-mix(in oklab,var(--text) 10%, transparent)}
+    .top-tools{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .empty{padding:32px;text-align:center;background:var(--surface-offset);border-radius:12px;color:var(--muted)}
+    @media (max-width:1100px){.kpis,.content-grid{grid-template-columns:1fr 1fr}.dashboard{grid-template-columns:88px 1fr}.brand,.sidebar .nav-label{display:none}.nav-link{justify-content:center;padding:12px}}
+    @media (max-width:780px){html,body{overflow:auto}.dashboard{display:block;height:auto}.sidebar{position:sticky;top:0;z-index:20;display:flex;gap:12px;padding:16px;overflow:auto}.logo-wrap{margin:0}.nav-group{display:flex;margin:0}.header{position:static;padding:16px}.main{padding:16px}.kpis,.content-grid,.calendar-head,.session-row{grid-template-columns:1fr}.calendar-head{display:none}.session-row{gap:8px}}
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <aside class="sidebar">
+      <div class="logo-wrap">
+        <svg class="logo" viewBox="0 0 64 64" fill="none" aria-label="Swim Coach Logo">
+          <rect x="6" y="10" width="52" height="44" rx="14" stroke="currentColor" stroke-width="4"></rect>
+          <path d="M16 38C21 33 27 33 32 38C37 43 43 43 48 38" stroke="currentColor" stroke-width="4" stroke-linecap="round"></path>
+          <path d="M18 28H46" stroke="currentColor" stroke-width="4" stroke-linecap="round"></path>
+        </svg>
+        <div class="brand">
+          <h1>Swim Coach</h1>
+          <p>Gemeinsames Planungsboard</p>
+        </div>
+      </div>
+      <nav class="nav-group">
+        <a class="nav-link active" href="#dashboard"><span>▣</span><span class="nav-label">Dashboard</span></a>
+        <a class="nav-link" href="#planung"><span>◫</span><span class="nav-label">Planung</span></a>
+      </nav>
+      <div class="panel stack" style="margin-top:24px">
+        <div><div class="small">Athlet</div><div style="font-weight:700">Malte</div></div>
+        <div><div class="small">Rhythmus</div><div>Dienstag & Donnerstag</div></div>
+      </div>
+    </aside>
+
+    <header class="header">
+      <div>
+        <div class="small">Trainingsjahr 2026</div>
+        <div class="page-title">Schwimmplanung</div>
+      </div>
+      <div class="top-tools">
+        <button class="theme-toggle" id="themeToggle" aria-label="Farbschema wechseln">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3A7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="main" id="main">
+      <section class="kpis">
+        <article class="card kpi"><div class="label">Geplante Einheiten</div><div class="value" id="plannedCount">0</div><div class="sub">Im aktuellen Board</div></article>
+        <article class="card kpi"><div class="label">Wöchentliche Slots</div><div class="value">2</div><div class="sub">Dienstag, Donnerstag</div></article>
+        <article class="card kpi"><div class="label">Einträge</div><div class="value" id="fileCount">0</div><div class="sub">Aus Google Sheet geladen</div></article>
+        <article class="card kpi"><div class="label">Nächster Schwerpunkt</div><div class="value" style="font-size:18px">Phase 1</div><div class="sub">Atmung, Lage, Rhythmus</div></article>
+      </section>
+
+      <section class="content-grid">
+        <article class="panel" id="planung">
+          <div class="panel-head">
+            <div>
+              <h2>Einheitenübersicht</h2>
+              <p class="section-copy">Hier siehst du alle Einträge, die aus deinem Google Sheet geladen werden. Änderungen im Sheet erscheinen nach Neuladen der GitHub Page.</p>
+            </div>
+            <span class="badge">Live</span>
+          </div>
+          <div class="calendar-head"><div>Datum</div><div>Einheit</div><div>Status</div></div>
+          <div class="session-list" id="sessionList"><div class="empty">Lade Daten...</div></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Hinweis</h2>
+              <p class="section-copy">Die Daten werden aus deinem veröffentlichten Google Sheet als CSV geladen. Wenn du neue Einträge im Sheet machst, Seite neu laden.</p>
+            </div>
+            <span class="badge">Info</span>
+          </div>
+          <div class="stack">
+            <div class="panel" style="padding:16px;background:var(--surface-2)"><div class="small">Verbindung</div><p class="muted">Google Sheets CSV Endpoint aktiv</p></div>
+            <div class="panel" style="padding:16px;background:var(--surface-2)"><div class="small">Ablauf</div><p class="muted">Eintrag in Sheets speichern → GitHub Page neu laden → Dashboard aktualisiert.</p></div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSrdb2-l0kfOwOvL2A2zBL7t_A5_P2tdnndYSK4zoc8Z_DAuvKgODHflE0z7UkonAeQDVujijpg4opp/pub?gid=0&single=true&output=csv";
+    const state = { sessions: [] };
+
+    const themeToggle = document.getElementById('themeToggle');
+    let theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', theme);
+    themeToggle.addEventListener('click', () => {
+      theme = theme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+    });
+
+    function parseCSV(text) {
+      const rows = [];
+      let cur = '', row = [], inQuotes = false;
+      for (let i = 0; i < text.length; i++) {
+        const ch = text[i], next = text[i + 1];
+        if (ch === '"' && inQuotes && next === '"') { cur += '"'; i++; continue; }
+        if (ch === '"') { inQuotes = !inQuotes; continue; }
+        if (ch === ',' && !inQuotes) { row.push(cur); cur = ''; continue; }
+        if ((ch === '\n' || ch === '\r') && !inQuotes) {
+          if (ch === '\r' && next === '\n') continue;
+          row.push(cur); rows.push(row); row = []; cur = ''; continue;
+        }
+        cur += ch;
+      }
+      if (cur.length || row.length) { row.push(cur); rows.push(row); }
+      return rows.filter(r => r.some(c => String(c).trim() !== ''));
+    }
+
+    function formatDate(raw) {
+      const d = new Date(raw);
+      if (!isNaN(d)) return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      return raw;
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'",'&#039;');
+    }
+
+    function renderSessions() {
+      const list = document.getElementById('sessionList');
+      document.getElementById('plannedCount').textContent = state.sessions.length;
+      document.getElementById('fileCount').textContent = state.sessions.length;
+      if (!state.sessions.length) {
+        list.innerHTML = '<div class="empty">Noch keine Einträge gefunden.</div>';
+        return;
+      }
+      list.innerHTML = state.sessions.map(s => `
+        <article class="session-row">
+          <div><div class="date">${escapeHtml(formatDate(s.date))}</div><div class="small">${escapeHtml(s.type || 'Einheit')}</div></div>
+          <div>
+            <div class="session-title">${escapeHtml(s.title || '')}</div>
+            <div class="session-notes">${escapeHtml(s.focus || '')}${s.meters ? ' · ' + escapeHtml(s.meters) + ' m' : ''}</div>
+            <div class="session-notes">${escapeHtml(s.content || '')}</div>
+          </div>
+          <div><span class="badge">Plan</span></div>
+        </article>`).join('');
+    }
+
+    async function loadSheet() {
+      const res = await fetch(SHEET_CSV_URL + '?_=' + Date.now(), { cache: 'no-store' });
+      const text = await res.text();
+      const rows = parseCSV(text);
+      rows.shift();
+      state.sessions = rows.map(r => ({
+        date: r[0] || '',
+        type: r[1] || '',
+        title: r[2] || '',
+        meters: r[3] || '',
+        focus: r[4] || '',
+        content: r[5] || '',
+        coach: r[6] || ''
+      })).filter(x => x.date || x.title);
+      renderSessions();
+    }
+
+    window.addEventListener('load', () => {
+      loadSheet().catch(err => {
+        document.getElementById('sessionList').innerHTML = '<div class="empty">Fehler beim Laden der Daten.</div>';
+        console.error(err);
+      });
+    });
+  </script>
+</body>
+</html>
